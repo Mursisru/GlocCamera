@@ -1,0 +1,10 @@
+G-LOC Camera (GlocCamera_Engine) — Nuclear Option / BepInEx 5
+==============================================================
+
+1. Install BepInEx 5 (x64) for Nuclear Option if you have not already.
+2. Copy GlocCamera_Engine.dll into:
+      Nuclear Option\BepInEx\plugins\
+3. Run the game once; config file appears at:
+      BepInEx\config\com.at747.gloccamera.cfg
+
+Source, changelog, and build instructions: see README.md in the repository.
