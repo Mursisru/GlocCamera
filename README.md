@@ -33,16 +33,6 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 The project references **`Unity.RenderPipelines.Core.Runtime`** and **`Unity.RenderPipelines.Universal.Runtime`** from `$(NuclearOptionRoot)\NuclearOption_Data\Managed\` for `Volume` / Bloom types. If your game build renames those assemblies, update the `HintPath` entries in `GlocCamera_Engine.csproj`.
 
-### Maintainer: release zip
-
-From repo root (after a Release build):
-
-```powershell
-.\scripts\package-release.ps1
-```
-
-Produces `release\GlocCamera_Engine_v<version>.zip`. Full publish checklist: [GITHUB_PUBLISH.md](GITHUB_PUBLISH.md).
-
 ## Configuration
 
 Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run.
