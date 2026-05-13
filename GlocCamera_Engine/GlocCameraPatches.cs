@@ -52,10 +52,14 @@ namespace GlocCamera_Engine
             if (PlayerSettings.useTrackIR && !framingPosTrack)
                 return;
 
+            bool useTrackIr = PlayerSettings.useTrackIR;
+            bool applyApex = GlocCameraPlugin.ApexViewEnabled.Value && (!useTrackIr || GlocCameraPlugin.ApexViewWithTrackIR.Value);
+            Vector3 apex = applyApex ? GlocApexViewDriver.GetSmoothedLocalOffset() : Vector3.zero;
+
             var vo = new Vector3(
-                GlocCameraPlugin.CockpitViewOffsetLocalX.Value,
-                GlocCameraPlugin.CockpitViewOffsetLocalY.Value,
-                GlocCameraPlugin.CockpitViewOffsetLocalZ.Value);
+                GlocCameraPlugin.CockpitViewOffsetLocalX.Value + apex.x,
+                GlocCameraPlugin.CockpitViewOffsetLocalY.Value + apex.y,
+                GlocCameraPlugin.CockpitViewOffsetLocalZ.Value + apex.z);
 
             if (PlayerSettings.useTrackIR)
             {

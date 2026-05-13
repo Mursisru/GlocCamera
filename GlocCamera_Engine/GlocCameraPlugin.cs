@@ -12,7 +12,7 @@ namespace GlocCamera_Engine
     {
         public const string PluginGuid = "com.at747.gloccamera";
         public const string PluginName = "G-LOC Camera";
-        public const string PluginVersion = "1.5.2";
+        public const string PluginVersion = "1.6.1";
 
         internal static GlocCameraPlugin Instance { get; private set; }
 
@@ -174,6 +174,27 @@ namespace GlocCamera_Engine
         internal static ConfigEntry<float> CockpitViewOffsetLocalZ { get; private set; }
         internal static ConfigEntry<float> CockpitViewFovBiasDegrees { get; private set; }
         internal static ConfigEntry<bool> CockpitViewApplyFramingWithTrackIR { get; private set; }
+
+        internal static ConfigEntry<bool> ApexViewEnabled { get; private set; }
+        internal static ConfigEntry<bool> ApexViewWithTrackIR { get; private set; }
+        internal static ConfigEntry<float> ApexViewMaxLateralMeters { get; private set; }
+        internal static ConfigEntry<float> ApexViewMaxVerticalMeters { get; private set; }
+        internal static ConfigEntry<float> ApexViewMaxDepthMeters { get; private set; }
+        internal static ConfigEntry<float> ApexViewLateralRollScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewLateralYawScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewLateralPitchScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewVerticalRollScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewVerticalYawScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewVerticalPitchScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewDepthRollScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewDepthYawScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewDepthPitchScale { get; private set; }
+        internal static ConfigEntry<float> ApexViewDeadZone { get; private set; }
+        internal static ConfigEntry<float> ApexViewSmoothTimeSec { get; private set; }
+        internal static ConfigEntry<float> ApexViewSmoothMaxMetersPerSec { get; private set; }
+        internal static ConfigEntry<float> ApexViewRollInputSign { get; private set; }
+        internal static ConfigEntry<float> ApexViewYawInputSign { get; private set; }
+        internal static ConfigEntry<float> ApexViewPitchInputSign { get; private set; }
 
         private Harmony _harmony;
 
@@ -483,6 +504,47 @@ namespace GlocCamera_Engine
             CockpitViewApplyFramingWithTrackIR = Config.Bind("CockpitView", "ApplyFramingWithTrackIR", false,
                 "If true, OffsetLocal* and FovBiasDegrees also apply with TrackIR (position components clamped like vanilla TrackIR limits).");
 
+            ApexViewEnabled = Config.Bind("ApexView", "Enabled", true,
+                "When TrackIR is off: smooth cockpit camera **local X/Y/Z** offset from **pitch + roll + yaw** (`ControlInputs`, same as the flight model).");
+            ApexViewWithTrackIR = Config.Bind("ApexView", "AlsoApplyWithTrackIR", false,
+                "If true, ApexView **X/Y/Z** is added even with TrackIR on (only when CockpitView framing-with-TrackIR path runs; otherwise vanilla head tracking stays exclusive).");
+            ApexViewMaxLateralMeters = Config.Bind("ApexView", "MaxLateralMeters", 0.085f,
+                "Clamp magnitude for camera local **X** from the blended axis vector (meters).");
+            ApexViewMaxVerticalMeters = Config.Bind("ApexView", "MaxVerticalMeters", 0.045f,
+                "Clamp magnitude for camera local **Y** (meters).");
+            ApexViewMaxDepthMeters = Config.Bind("ApexView", "MaxDepthMeters", 0.03f,
+                "Clamp magnitude for camera local **Z** apex add (meters), **added on top of** CockpitView OffsetLocalZ and **before** G-LOC dolly (TrackIR off). Keep small so it does not fight longitudinal dolly.");
+            ApexViewLateralRollScale = Config.Bind("ApexView", "LateralRollScale", 1f,
+                "How much **roll** contributes to lateral offset (before clamp ±1).");
+            ApexViewLateralYawScale = Config.Bind("ApexView", "LateralYawScale", 1f,
+                "How much **yaw** contributes to lateral offset.");
+            ApexViewLateralPitchScale = Config.Bind("ApexView", "LateralPitchScale", 0.06f,
+                "How much **pitch** contributes to lateral offset (usually small; raise if you want pitch to slide the view sideways).");
+            ApexViewVerticalRollScale = Config.Bind("ApexView", "VerticalRollScale", -0.38f,
+                "How much **roll** contributes to vertical offset (negative often nudges view **down** when rolling right). Flip sign if inverted.");
+            ApexViewVerticalYawScale = Config.Bind("ApexView", "VerticalYawScale", 0.12f,
+                "How much **yaw** contributes to vertical offset.");
+            ApexViewVerticalPitchScale = Config.Bind("ApexView", "VerticalPitchScale", 0.72f,
+                "How much **pitch** contributes to vertical offset (nose-up input usually raises the eyepoint toward the forward horizon). Flip sign with PitchInputSign if inverted.");
+            ApexViewDepthRollScale = Config.Bind("ApexView", "DepthRollScale", 0.12f,
+                "How much **roll** contributes to local **Z** depth offset.");
+            ApexViewDepthYawScale = Config.Bind("ApexView", "DepthYawScale", 0.18f,
+                "How much **yaw** contributes to local **Z** depth offset.");
+            ApexViewDepthPitchScale = Config.Bind("ApexView", "DepthPitchScale", 0.42f,
+                "How much **pitch** contributes to local **Z** (e.g. slight forward peek when pulling). Flip sign if depth feels inverted.");
+            ApexViewDeadZone = Config.Bind("ApexView", "AxisDeadZone", 0.04f,
+                "Per-axis |input| below this (after ±1 clamp) is treated as zero before blending.");
+            ApexViewSmoothTimeSec = Config.Bind("ApexView", "SmoothTimeSeconds", 0.42f,
+                "SmoothDamp time for apex offset (higher = slower return).");
+            ApexViewSmoothMaxMetersPerSec = Config.Bind("ApexView", "SmoothMaxMetersPerSec", 0.12f,
+                "Cap apex offset speed (m/s); 0 = no cap.");
+            ApexViewRollInputSign = Config.Bind("ApexView", "RollInputSign", 1f,
+                "Multiply roll input by ±1 if lateral peek feels inverted for your bindings.");
+            ApexViewYawInputSign = Config.Bind("ApexView", "YawInputSign", 1f,
+                "Multiply yaw input by ±1 if yaw-driven peek feels inverted.");
+            ApexViewPitchInputSign = Config.Bind("ApexView", "PitchInputSign", 1f,
+                "Multiply pitch input by ±1 if pitch-driven vertical/depth feels inverted for your bindings.");
+
             _harmony = new Harmony(PluginGuid);
             _harmony.PatchAll(typeof(GlocCameraPatches));
             _harmony.PatchAll(typeof(GlocCameraShakePatches));
@@ -498,6 +560,7 @@ namespace GlocCamera_Engine
         {
             var cam = SceneSingleton<CameraStateManager>.i;
             GlocCameraDriver.Tick(cam);
+            GlocApexViewDriver.Tick(cam);
             GlocCameraAtmosphereDriver.Tick(cam);
             GlocCockpitLightingDriver.Tick(cam);
         }
@@ -507,6 +570,7 @@ namespace GlocCamera_Engine
             GlocCameraAtmosphereDriver.ForceRestore();
             GlocCockpitLightingDriver.ForceRestore();
             GlocCameraShakeDriver.ResetState();
+            GlocApexViewDriver.ResetState();
             _harmony?.UnpatchSelf();
         }
     }

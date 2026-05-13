@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="GlocCameraPlugin.cs" />
     <Compile Include="GlocCameraDriver.cs" />
+    <Compile Include="GlocApexViewDriver.cs" />
     <Compile Include="GlocCameraPatches.cs" />
     <Compile Include="GlocCameraShakeDriver.cs" />
     <Compile Include="GlocCameraShakePatches.cs" />

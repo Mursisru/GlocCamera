@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.1 — 2026-05-12
+
+- **ApexView:** Uses **pitch, roll, and yaw** from `ControlInputs` — local **X, Y, and Z** ( **`MaxDepthMeters`** + **`Depth*Scale`** ). New cfg: lateral/vertical/**depth** pitch scales, **`PitchInputSign`**. Default **yaw lateral** weight raised (**`LateralYawScale` = 1**) so rudder/coordinated yaw is easier to feel.
+
+## 1.6.0 — 2026-05-12
+
+- **ApexView (no TrackIR):** Cockpit camera **local X/Y** follows smoothed **roll + yaw** control inputs (same `ControlInputs` as the flight model), so banking/yawing gently **peeks** toward the turn / outside horizon. Config section **`ApexView`**: enable, lateral/vertical caps, per-axis blend scales, dead zone, SmoothDamp time/speed, optional **input sign** flips, and **`AlsoApplyWithTrackIR`** when using CockpitView framing with TrackIR.
+
 ## 1.5.2 — 2026-05-12
 
 - **Lighting:** Standard spawn pitch **`FillPitchDegrees = +10°`**. **Normal vs wide** cone: **`FillSpotAngle` / `FillInnerSpotAngle`** vs **`FillSpotAngleWide` / `FillInnerSpotAngleWide`**. Hotkeys (BepInEx `KeyboardShortcut`, rebindable in cfg): **`J`** toggles fill **armed** (night gate still applies), **`K`** toggles **wide** mode. Hotkeys only when **controls on**, **cursor hidden**, map not maximized, radial menu idle.
