@@ -27,7 +27,7 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 ## Configuration
 
-Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run.
+Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run (for change settings in-game – use BepInEx ConfiguratorManager).
 
 | Section | Key | Notes |
 |--------|-----|--------|
