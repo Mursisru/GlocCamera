@@ -12,7 +12,7 @@ namespace GlocCamera_Engine
     {
         public const string PluginGuid = "com.at747.gloccamera";
         public const string PluginName = "G-LOC Camera";
-        public const string PluginVersion = "2.0.8";
+        public const string PluginVersion = "2.0.9";
 
         internal static GlocCameraPlugin Instance { get; private set; }
 
@@ -645,8 +645,8 @@ namespace GlocCamera_Engine
             LightingExternalRangeMul = Config.Bind("Lighting", "ExternalRangeMul", 1.12f,
                 "Multiply range on matched external lights.");
             LightingExternalNameSubstrings = Config.Bind("Lighting", "ExternalNameSubstrings",
-                "gear;landing;nose;taxi;spot;beacon;strobe;nav;wing",
-                "Semicolon/comma/| separated substrings matched on transform path from aircraft root (case-insensitive). Lights under a **cockpit** path are skipped unless they also match a substring.");
+                "taxi;spot;beacon;strobe;nav;wing",
+                "Semicolon/comma/| separated substrings matched on transform path from aircraft root (case-insensitive). Lights under a **cockpit** path are skipped unless they also match. Does not include gear/nose/landing (avoids nose-strut wash).");
 
             CockpitViewOffsetLocalX = Config.Bind("CockpitView", "OffsetLocalX", 0f,
                 "Additive local camera position (meters) after vanilla cockpit placement, before G-LOC dolly on Z (TrackIR off).");
@@ -706,6 +706,10 @@ namespace GlocCamera_Engine
             _harmony.PatchAll(typeof(GlocCameraShakeSourcesPatches));
             _harmony.PatchAll(typeof(GlocCameraAtmospherePatches));
             _harmony.PatchAll(typeof(GlocNightVisionPatches));
+
+            if (GameManager.GetLocalAircraft(out Aircraft ac))
+                GlocCockpitLightingDriver.DestroyStrayModObjectsOnAircraft(ac);
+
             Logger.LogInfo($"{PluginName} {PluginVersion} loaded.");
         }
 

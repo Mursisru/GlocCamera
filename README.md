@@ -8,7 +8,7 @@ Optional **atmosphere** tweaks **URP Bloom** and **post-exposure** on the game�
 
 The mod adds an offset on top of the game’s desired FOV (settings + zoom axis). Final easing uses a configurable per-frame lerp (default **0.11**, softer than vanilla **~0.2**).
 
-**Current version:** **2.0.8** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
+**Current version:** **2.0.9** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
 
 ## Download
 
@@ -27,7 +27,7 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 ## Build (Visual Studio / MSBuild)
 
-1. If **Nuclear Option** is not under the default Steam path, set `<NuclearOptionRoot>` in `GlocCamera_Engine\GlocCamera_Engine.csproj` to your install folder.
+1. If **Nuclear Option** is not under the default Steam path, copy `Directory.Build.user.props.example` to **`Directory.Build.user.props`** in the repo root and set `<NuclearOptionRoot>` to your install folder (same pattern as `TacticalMapLayers` / other mods). Otherwise MSBuild uses the default in `Directory.Build.props`.
 2. Open `GlocCamera_Engine.slnx` or `GlocCamera_Engine\GlocCamera_Engine.csproj`, build **Release**.
 3. Output: `GlocCamera_Engine\bin\Release\GlocCamera_Engine.dll`.
 
@@ -41,7 +41,7 @@ From repo root (after a Release build):
 .\scripts\package-release.ps1
 ```
 
-Produces `release\GlocCamera_Engine_v<version>.zip` (DLL + `release\INSTALL.txt`).
+Produces `release\GlocCamera_Engine_v<version>.zip`. Full publish checklist: [GITHUB_PUBLISH.md](GITHUB_PUBLISH.md).
 
 ## Configuration
 
@@ -107,11 +107,7 @@ Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run.
 | Lighting | `FillToggleHotkey` / `FillWideModeHotkey` | Defaults **`J`** = toggle fill **armed** (still needs night + `FillNightMin01`), **`K`** = **wide** vs normal cone (`FillSpotAngle*` vs `FillSpotAngleWide*`). Edit in cfg for other keys / modifiers. |
 | Lighting | `FillSpotAngleWide` / `FillInnerSpotAngleWide` | Wide flashlight outer/inner cone (degrees) when **K** has toggled wide mode on. |
 | Lighting | `FillNightMin01` / `FillEnabled` / `FillLocalPosition` / `FillPitchDegrees` / `FillYawDegrees` / `FillRollDegrees` / `FillIntensity` / … | Fill **spawns** on the **cockpit camera** using **camera-local** pos/euler, then **one-shot** reparent to **`cockpit.transform`** with **world pose preserved** — frozen on the panel; changing cfg does **not** move it until the fill is recreated (leave cockpit / swap aircraft / toggle Fill). |
-| Lighting | `ExternalIntensityMul` / `ExternalRangeMul` / `ExternalNameSubstrings` | Boost lights whose hierarchy path contains a substring (e.g. **gear**, **landing**). Paths under **cockpit** are ignored **unless** they also match — avoids washing out the HUD. Add `;`-separated tokens for odd airframes. |
-| Lighting | `GearEnabled` / `GearNightMin01` / `GearRequireGearDown` | Nose-strut **landing wash** + **forward ground spot** when gear is down (`GearNightMin01` **0** = day and night). |
-| Lighting | `NoseGearLight*` | Wide warm spot on nose **unsprung** strut (runway/taxi in front of wheels). |
-| Lighting | `ForwardSpot*` | Bright long-range spot on the ground ahead. |
-| Lighting | `GearBoostVanilla` / `GearVanillaBoostMul` | Force-enable and strengthen vanilla prefab lights on gear/landing paths. |
+| Lighting | `ExternalIntensityMul` / `ExternalRangeMul` / `ExternalNameSubstrings` | Boost lights whose hierarchy path contains a substring (default: **nav**, **beacon**, **strobe**, **wing**, **taxi**, **spot** — not gear/nose). Paths under **cockpit** are ignored **unless** they also match. |
 | CockpitView | `OffsetLocalX` / `OffsetLocalY` / `OffsetLocalZ` | Additive **local** camera shift after vanilla cockpit placement. **Z** stacks with G-LOC dolly when TrackIR is off (`finalZ = dolly + OffsetLocalZ`). |
 | CockpitView | `FovBiasDegrees` | Additive FOV after vanilla clamp + G-LOC longitudinal offset; clamped again to cockpit min/max. |
 | CockpitView | `ApplyFramingWithTrackIR` | Default **false** (vanilla TrackIR pose unchanged). If **true**, offsets and FOV bias apply; **XYZ** are clamped like vanilla TrackIR limits. |

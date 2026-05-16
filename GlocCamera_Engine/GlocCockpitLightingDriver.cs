@@ -31,7 +31,27 @@ namespace GlocCamera_Engine
         {
             RestoreExternalLights();
             DestroyFill();
+            if (_boundAircraft != null)
+                DestroyStrayModObjectsOnAircraft(_boundAircraft);
             _boundAircraft = null;
+        }
+
+        /// <summary>Removes legacy mod-spawned lights/particles left on the airframe (e.g. nose gear experiments).</summary>
+        internal static void DestroyStrayModObjectsOnAircraft(Aircraft ac)
+        {
+            if (ac?.transform == null)
+                return;
+
+            foreach (Transform t in ac.transform.GetComponentsInChildren<Transform>(true))
+            {
+                if (t == null || t.gameObject == null)
+                    continue;
+                if (_fillRoot != null && t.gameObject == _fillRoot)
+                    continue;
+                if (!t.name.StartsWith("GlocCamera_"))
+                    continue;
+                Object.Destroy(t.gameObject);
+            }
         }
 
         internal static void Tick(CameraStateManager cam)
@@ -79,6 +99,7 @@ namespace GlocCamera_Engine
             if (_boundAircraft != ac)
             {
                 ForceRestore();
+                DestroyStrayModObjectsOnAircraft(ac);
                 BindAircraft(ac);
             }
 
@@ -229,7 +250,7 @@ namespace GlocCamera_Engine
                 DestroyFill();
             }
 
-            DestroyStrayModFillOnAircraft(ac);
+            DestroyStrayModObjectsOnAircraft(ac);
             _fillRoot = new GameObject(FillObjectName);
             _fillRoot.transform.SetParent(cockpitCameraTransform, false);
             _fillRoot.transform.localPosition = GlocCameraPlugin.LightingFillLocalPosition.Value;
@@ -256,20 +277,6 @@ namespace GlocCamera_Engine
                 return;
             _fillRoot.transform.SetParent(cockpitRoot, worldPositionStays: true);
             _fillPoseFrozenToCockpit = true;
-        }
-
-        /// <summary>Removes mod fill objects anywhere under the aircraft (e.g. stale copies).</summary>
-        private static void DestroyStrayModFillOnAircraft(Aircraft ac)
-        {
-            if (ac?.transform == null)
-                return;
-            foreach (Transform t in ac.transform.GetComponentsInChildren<Transform>(true))
-            {
-                if (t == null)
-                    continue;
-                if (t.name == "GlocCamera_PilotFill" || t.name == FillObjectName)
-                    Object.Destroy(t.gameObject);
-            }
         }
 
         private static string BuildTransformPath(Transform t, Transform root)

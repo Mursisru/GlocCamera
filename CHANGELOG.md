@@ -2,6 +2,12 @@
 
 Version numbers: **MAJOR.MINOR.PATCH**, each segment **0–9** (carry on overflow).
 
+## 2.0.9 — 2026-05-16
+
+### Fixed
+- **Nose gear lighting leftovers:** remove all legacy `GlocCamera_*` objects on the airframe (nose strut landing light, forward ground spot, old pilot fill, etc.) on bind, restore, and plugin load.
+- **External light boost:** default `ExternalNameSubstrings` no longer includes **gear** / **nose** / **landing** (stops amplifying nose-strut lamps).
+
 ## 2.0.8 — 2026-05-16
 
 ### Changed
