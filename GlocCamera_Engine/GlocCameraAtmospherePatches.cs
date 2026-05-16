@@ -9,6 +9,7 @@ namespace GlocCamera_Engine
         private static void Postfix()
         {
             GlocCameraAtmosphereDriver.ForceRestore();
+            GlocNightVisionDriver.ForceRestore();
             GlocCockpitLightingDriver.ForceRestore();
             GlocCameraShakeDriver.ResetState();
         }

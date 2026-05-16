@@ -12,7 +12,7 @@ namespace GlocCamera_Engine
     {
         public const string PluginGuid = "com.at747.gloccamera";
         public const string PluginName = "G-LOC Camera";
-        public const string PluginVersion = "1.6.1";
+        public const string PluginVersion = "2.0.8";
 
         internal static GlocCameraPlugin Instance { get; private set; }
 
@@ -148,6 +148,58 @@ namespace GlocCamera_Engine
         internal static ConfigEntry<float> AtmosphereSunDotDay { get; private set; }
         internal static ConfigEntry<float> AtmosphereSunDotNight { get; private set; }
         internal static ConfigEntry<float> AtmosphereNightNoSun { get; private set; }
+        internal static ConfigEntry<float> AtmosphereBloomScatterAddDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereBloomScatterAddNight { get; private set; }
+        internal static ConfigEntry<string> AtmosphereBloomTintHtml { get; private set; }
+        internal static ConfigEntry<float> AtmosphereBloomTintBlendDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereBloomTintBlendNight { get; private set; }
+        internal static ConfigEntry<float> AtmosphereSaturationAddDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereSaturationAddNight { get; private set; }
+        internal static ConfigEntry<float> AtmosphereContrastAddDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereContrastAddNight { get; private set; }
+        internal static ConfigEntry<string> AtmosphereColorFilterHtml { get; private set; }
+        internal static ConfigEntry<float> AtmosphereColorFilterBlendDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereColorFilterBlendNight { get; private set; }
+        internal static ConfigEntry<float> AtmosphereVignetteIntensityAddDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereVignetteIntensityAddNight { get; private set; }
+        internal static ConfigEntry<float> AtmosphereChromaticAddDay { get; private set; }
+        internal static ConfigEntry<float> AtmosphereChromaticAddNight { get; private set; }
+        internal static ConfigEntry<bool> AtmosphereDeferDuringVanillaGloc { get; private set; }
+
+        internal static ConfigEntry<bool> NightVisionEnabled { get; private set; }
+        internal static ConfigEntry<float> NightVisionLerpSpeed { get; private set; }
+        internal static ConfigEntry<float> NightVisionSmoothTimeSec { get; private set; }
+        internal static ConfigEntry<float> NightVisionAmbientSmoothTimeSec { get; private set; }
+        internal static ConfigEntry<float> NightVisionAmbientBright { get; private set; }
+        internal static ConfigEntry<float> NightVisionAmbientDark { get; private set; }
+        internal static ConfigEntry<float> NightVisionPostExposureAddBright { get; private set; }
+        internal static ConfigEntry<float> NightVisionPostExposureAddDark { get; private set; }
+        internal static ConfigEntry<float> NightVisionPostExposureScale { get; private set; }
+        internal static ConfigEntry<float> NightVisionPostExposureMax { get; private set; }
+        internal static ConfigEntry<float> NightVisionPostExposureMin { get; private set; }
+        internal static ConfigEntry<bool> NightVisionSnapExposureOnArm { get; private set; }
+        internal static ConfigEntry<bool> NightVisionAbsoluteGrade { get; private set; }
+        internal static ConfigEntry<float> NightVisionSaturation { get; private set; }
+        internal static ConfigEntry<float> NightVisionContrast { get; private set; }
+        internal static ConfigEntry<float> NightVisionSaturationAddBright { get; private set; }
+        internal static ConfigEntry<float> NightVisionSaturationAddDark { get; private set; }
+        internal static ConfigEntry<float> NightVisionContrastAddBright { get; private set; }
+        internal static ConfigEntry<float> NightVisionContrastAddDark { get; private set; }
+        internal static ConfigEntry<float> NightVisionFilmGrainIntensity { get; private set; }
+        internal static ConfigEntry<float> NightVisionChromaticIntensity { get; private set; }
+        internal static ConfigEntry<float> NightVisionVignetteSmoothness { get; private set; }
+        internal static ConfigEntry<bool> NightVisionBoostSceneLights { get; private set; }
+        internal static ConfigEntry<string> NightVisionColorFilterHtml { get; private set; }
+        internal static ConfigEntry<float> NightVisionColorFilterStrength { get; private set; }
+        internal static ConfigEntry<float> NightVisionBloomIntensityAdd { get; private set; }
+        internal static ConfigEntry<float> NightVisionBloomThresholdAdd { get; private set; }
+        internal static ConfigEntry<float> NightVisionBloomScatterAdd { get; private set; }
+        internal static ConfigEntry<float> NightVisionBloomTintBlend { get; private set; }
+        internal static ConfigEntry<float> NightVisionVignetteIntensity { get; private set; }
+        internal static ConfigEntry<float> NightVisionLightMulBright { get; private set; }
+        internal static ConfigEntry<float> NightVisionLightMulDark { get; private set; }
+        internal static ConfigEntry<float> NightVisionLightRangeMul { get; private set; }
+        internal static ConfigEntry<float> NightVisionSceneIlluminatorMul { get; private set; }
 
         internal static ConfigEntry<bool> LightingEnabled { get; private set; }
         internal static ConfigEntry<float> LightingFillNightMin01 { get; private set; }
@@ -431,27 +483,130 @@ namespace GlocCamera_Engine
                 "Time constant for rocket-hit shake decay to zero.");
 
             AtmosphereEnabled = Config.Bind("Atmosphere", "Enabled", true,
-                "Cockpit-only: gently boost URP Bloom and post-exposure at night on the game's post volume; restores on leaving cockpit.");
-            AtmosphereLerpSpeed = Config.Bind("Atmosphere", "LerpSpeed", 5f,
+                "Cockpit-only cinematic URP post (bloom halation, color punch, vignette, chromatic aberration) on the game's volume; restores on leave.");
+            AtmosphereLerpSpeed = Config.Bind("Atmosphere", "LerpSpeed", 6f,
                 "Approach speed toward day/night targets (higher = snappier).");
-            AtmosphereBloomAddDay = Config.Bind("Atmosphere", "BloomIntensityAddDay", 0f,
+            AtmosphereBloomAddDay = Config.Bind("Atmosphere", "BloomIntensityAddDay", 0.09f,
                 "Bloom intensity add at full day (relative to snapshot at cockpit enter).");
-            AtmosphereBloomAddNight = Config.Bind("Atmosphere", "BloomIntensityAddNight", 0.32f,
-                "Bloom intensity add at full night.");
-            AtmosphereBloomThresholdAddDay = Config.Bind("Atmosphere", "BloomThresholdAddDay", 0f,
-                "Bloom threshold add at full day (positive raises threshold => less bloom).");
-            AtmosphereBloomThresholdAddNight = Config.Bind("Atmosphere", "BloomThresholdAddNight", -0.25f,
-                "Bloom threshold add at full night (negative lowers threshold => more bloom, helps instrument glow).");
-            AtmospherePostExposureAddDay = Config.Bind("Atmosphere", "PostExposureAddDay", 0f,
-                "Color adjustments post-exposure add at full day (EV-style).");
-            AtmospherePostExposureAddNight = Config.Bind("Atmosphere", "PostExposureAddNight", 0.45f,
+            AtmosphereBloomAddNight = Config.Bind("Atmosphere", "BloomIntensityAddNight", 0.34f,
+                "Bloom intensity add at full night (softer halation on emissives).");
+            AtmosphereBloomThresholdAddDay = Config.Bind("Atmosphere", "BloomThresholdAddDay", -0.03f,
+                "Bloom threshold add at full day (negative = more highlights bloom).");
+            AtmosphereBloomThresholdAddNight = Config.Bind("Atmosphere", "BloomThresholdAddNight", -0.18f,
+                "Bloom threshold add at full night.");
+            AtmosphereBloomScatterAddDay = Config.Bind("Atmosphere", "BloomScatterAddDay", 0.09f,
+                "Bloom scatter add at day (wider soft flare around bright sources).");
+            AtmosphereBloomScatterAddNight = Config.Bind("Atmosphere", "BloomScatterAddNight", 0.16f,
+                "Bloom scatter add at night.");
+            AtmosphereBloomTintHtml = Config.Bind("Atmosphere", "BloomTintHtml", "#FFF2E0",
+                "Warm tint mixed into bloom (HTML color).");
+            AtmosphereBloomTintBlendDay = Config.Bind("Atmosphere", "BloomTintBlendDay", 0.14f,
+                "0–1: how much BloomTintHtml replaces the snapshot tint at full day.");
+            AtmosphereBloomTintBlendNight = Config.Bind("Atmosphere", "BloomTintBlendNight", 0.22f,
+                "Bloom warm tint blend at full night.");
+            AtmospherePostExposureAddDay = Config.Bind("Atmosphere", "PostExposureAddDay", 0.06f,
+                "Post-exposure add at full day (EV-style lift).");
+            AtmospherePostExposureAddNight = Config.Bind("Atmosphere", "PostExposureAddNight", 0.32f,
                 "Post-exposure add at full night.");
+            AtmosphereSaturationAddDay = Config.Bind("Atmosphere", "SaturationAddDay", 14f,
+                "Color saturation add at day (URP -100..100 scale).");
+            AtmosphereSaturationAddNight = Config.Bind("Atmosphere", "SaturationAddNight", 9f,
+                "Saturation add at night.");
+            AtmosphereContrastAddDay = Config.Bind("Atmosphere", "ContrastAddDay", 11f,
+                "Contrast add at day.");
+            AtmosphereContrastAddNight = Config.Bind("Atmosphere", "ContrastAddNight", 7f,
+                "Contrast add at night.");
+            AtmosphereColorFilterHtml = Config.Bind("Atmosphere", "ColorFilterHtml", "#FFF9F2",
+                "Warm cinematic color filter (multiplies grading).");
+            AtmosphereColorFilterBlendDay = Config.Bind("Atmosphere", "ColorFilterBlendDay", 0.14f,
+                "0–1: mix toward ColorFilterHtml at full day.");
+            AtmosphereColorFilterBlendNight = Config.Bind("Atmosphere", "ColorFilterBlendNight", 0.1f,
+                "Color filter blend at night.");
+            AtmosphereVignetteIntensityAddDay = Config.Bind("Atmosphere", "VignetteIntensityAddDay", 0.02f,
+                "Vignette intensity add at day (cinematic edge falloff).");
+            AtmosphereVignetteIntensityAddNight = Config.Bind("Atmosphere", "VignetteIntensityAddNight", 0.04f,
+                "Vignette add at night.");
+            AtmosphereChromaticAddDay = Config.Bind("Atmosphere", "ChromaticAberrationAddDay", 0.14f,
+                "Chromatic aberration add at day (lens fringe; 0 if profile has no component).");
+            AtmosphereChromaticAddNight = Config.Bind("Atmosphere", "ChromaticAberrationAddNight", 0.22f,
+                "Chromatic aberration add at night.");
+            AtmosphereDeferDuringVanillaGloc = Config.Bind("Atmosphere", "DeferSaturationVignetteDuringVanillaGloc", true,
+                "While vanilla G-LOC blackout/greyout UI is visible, skip saturation/vignette/color-filter so the game's effect is not fought.");
             AtmosphereSunDotDay = Config.Bind("Atmosphere", "SunDotDay", 0.32f,
                 "Sun direction heuristic: Dot(-sun.forward, up) at/above this reads as day (see SunDotNight).");
             AtmosphereSunDotNight = Config.Bind("Atmosphere", "SunDotNight", -0.08f,
                 "Dot(-sun.forward, up) at/below this reads as night; between SunDotNight and SunDotDay blends.");
             AtmosphereNightNoSun = Config.Bind("Atmosphere", "NightBlendNoSun", 0.45f,
                 "Night blend (0–1) when RenderSettings.sun is null.");
+
+            NightVisionEnabled = Config.Bind("NightVision", "Enabled", true,
+                "When vanilla NVG is on in cockpit: realistic Gen-III style grade (P43 green phosphor, tube vignette, light halation).");
+            NightVisionAbsoluteGrade = Config.Bind("NightVision", "AbsoluteGrade", true,
+                "If true, use Saturation/Contrast targets (realistic mono look). If false, use legacy *Add* keys on snapshot.");
+            NightVisionLerpSpeed = Config.Bind("NightVision", "LerpSpeed", 10f,
+                "[Unused] Legacy; use SmoothTimeSeconds.");
+            NightVisionSmoothTimeSec = Config.Bind("NightVision", "SmoothTimeSeconds", 0.42f,
+                "SmoothDamp time for exposure/bloom after vanilla auto-gain (stops 1 Hz pulsing). 0 = instant.");
+            NightVisionAmbientSmoothTimeSec = Config.Bind("NightVision", "AmbientSmoothTimeSeconds", 0.55f,
+                "Smooth LevelInfo ambient before gain offsets (stops flicker from ambient noise).");
+            NightVisionAmbientBright = Config.Bind("NightVision", "AmbientBright", 0.35f,
+                "LevelInfo ambient at/above this uses the 'bright night' NVG tuning branch.");
+            NightVisionAmbientDark = Config.Bind("NightVision", "AmbientDark", 0.02f,
+                "Ambient at/below this uses the 'dark night' branch (more gain).");
+            NightVisionPostExposureAddBright = Config.Bind("NightVision", "PostExposureAddBright", 0f,
+                "EV offset on top of scaled vanilla gain (0 = no boost).");
+            NightVisionPostExposureAddDark = Config.Bind("NightVision", "PostExposureAddDark", 0f,
+                "EV offset when ambient is dark.");
+            NightVisionPostExposureScale = Config.Bind("NightVision", "PostExposureScale", 0.94f,
+                "Multiply vanilla auto-gain EV (< 1 = darker than stock NVG).");
+            NightVisionPostExposureMax = Config.Bind("NightVision", "PostExposureMax", 8f,
+                "Hard cap on NVG post-exposure (safety only; lower Scale for darker image).");
+            NightVisionPostExposureMin = Config.Bind("NightVision", "PostExposureMin", -4f,
+                "Floor on NVG post-exposure (do not raise — was lifting shadows).");
+            NightVisionSnapExposureOnArm = Config.Bind("NightVision", "SnapExposureOnArm", true,
+                "On NVG enable: snap brightness immediately (no fade-in from wrong ambient).");
+            NightVisionSaturation = Config.Bind("NightVision", "Saturation", -86f,
+                "Target URP saturation when AbsoluteGrade is on (-100..100; near -100 = P43 mono green via filter).");
+            NightVisionContrast = Config.Bind("NightVision", "Contrast", 11f,
+                "Target contrast when AbsoluteGrade is on.");
+            NightVisionSaturationAddBright = Config.Bind("NightVision", "SaturationAddBright", 1f,
+                "[Legacy] Added saturation when AbsoluteGrade is false.");
+            NightVisionSaturationAddDark = Config.Bind("NightVision", "SaturationAddDark", 3f,
+                "[Legacy] Added saturation (dark ambient).");
+            NightVisionContrastAddBright = Config.Bind("NightVision", "ContrastAddBright", 2f,
+                "[Legacy] Added contrast.");
+            NightVisionContrastAddDark = Config.Bind("NightVision", "ContrastAddDark", 4f,
+                "[Legacy] Added contrast (dark).");
+            NightVisionColorFilterHtml = Config.Bind("NightVision", "ColorFilterHtml", "#88FFAA",
+                "P43-style green phosphor color filter (#C8E8D0 = white phosphor / ANVIS).");
+            NightVisionColorFilterStrength = Config.Bind("NightVision", "ColorFilterStrength", 0.52f,
+                "0–1 mix toward ColorFilterHtml.");
+            NightVisionBloomIntensityAdd = Config.Bind("NightVision", "BloomIntensityAdd", 0.07f,
+                "Bloom intensity add (halation on runway lights / IR hotspots).");
+            NightVisionBloomThresholdAdd = Config.Bind("NightVision", "BloomThresholdAdd", -0.11f,
+                "Bloom threshold add (negative = lights bloom like real tubes).");
+            NightVisionBloomScatterAdd = Config.Bind("NightVision", "BloomScatterAdd", 0.1f,
+                "Bloom scatter (soft bloom spread).");
+            NightVisionBloomTintBlend = Config.Bind("NightVision", "BloomTintBlend", 0.4f,
+                "Green phosphor tint in bloom halation.");
+            NightVisionVignetteIntensity = Config.Bind("NightVision", "VignetteIntensity", 0.3f,
+                "Image intensifier tube vignette.");
+            NightVisionVignetteSmoothness = Config.Bind("NightVision", "VignetteSmoothness", 0.42f,
+                "Tube edge softness.");
+            NightVisionFilmGrainIntensity = Config.Bind("NightVision", "FilmGrainIntensity", 0.14f,
+                "Static scintillation grain (lower = less sparkle; 0 = off).");
+            NightVisionChromaticIntensity = Config.Bind("NightVision", "ChromaticIntensity", 0.07f,
+                "Edge chromatic fringe (0 = off).");
+            NightVisionBoostSceneLights = Config.Bind("NightVision", "BoostSceneLights", false,
+                "If true, multiply nightVisLight / scene illuminator (can blow out NVG; off by default).");
+            NightVisionLightMulBright = Config.Bind("NightVision", "CockpitLightMulBright", 1.05f,
+                "nightVisLight intensity multiply when BoostSceneLights is on.");
+            NightVisionLightMulDark = Config.Bind("NightVision", "CockpitLightMulDark", 1.12f,
+                "nightVisLight multiply (dark ambient).");
+            NightVisionLightRangeMul = Config.Bind("NightVision", "CockpitLightRangeMul", 1f,
+                "nightVisLight range multiply.");
+            NightVisionSceneIlluminatorMul = Config.Bind("NightVision", "SceneIlluminatorMul", 1f,
+                "LevelInfo.nightVisionIlluminator multiply when BoostSceneLights is on.");
 
             LightingEnabled = Config.Bind("Lighting", "Enabled", true,
                 "Cockpit-only: optional instrument fill spot at night + multiply selected external aircraft lights; restores on leaving cockpit.");
@@ -550,6 +705,7 @@ namespace GlocCamera_Engine
             _harmony.PatchAll(typeof(GlocCameraShakePatches));
             _harmony.PatchAll(typeof(GlocCameraShakeSourcesPatches));
             _harmony.PatchAll(typeof(GlocCameraAtmospherePatches));
+            _harmony.PatchAll(typeof(GlocNightVisionPatches));
             Logger.LogInfo($"{PluginName} {PluginVersion} loaded.");
         }
 
@@ -562,12 +718,14 @@ namespace GlocCamera_Engine
             GlocCameraDriver.Tick(cam);
             GlocApexViewDriver.Tick(cam);
             GlocCameraAtmosphereDriver.Tick(cam);
+            GlocNightVisionDriver.Tick(cam);
             GlocCockpitLightingDriver.Tick(cam);
         }
 
         private void OnDestroy()
         {
             GlocCameraAtmosphereDriver.ForceRestore();
+            GlocNightVisionDriver.ForceRestore();
             GlocCockpitLightingDriver.ForceRestore();
             GlocCameraShakeDriver.ResetState();
             GlocApexViewDriver.ResetState();

@@ -1,5 +1,145 @@
 # Changelog
 
+Version numbers: **MAJOR.MINOR.PATCH**, each segment **0–9** (carry on overflow).
+
+## 2.0.8 — 2026-05-16
+
+### Changed
+- **NVG darker / no brighten-in:** vanilla gain × **`PostExposureScale` (0.94)**, zero EV add by default, removed high `PostExposureMin` floor; ambient sampled on arm (fixes fade-in brighter).
+
+## 2.0.7 — 2026-05-16
+
+### Fixed
+- **NVG 1 Hz pulse:** skip vanilla `UpdateGain` (1 s throttle); recompute the same gain curve **every frame** with smoothed ambient.
+
+## 2.0.6 — 2026-05-16
+
+### Fixed
+- **NVG pulsing / flashes:** smooth exposure & bloom after vanilla 1 Hz auto-gain; apply overrides same frame as `UpdateGain`; smoother ambient; lower film grain default.
+
+## 2.0.5 — 2026-05-16
+
+### Changed
+- **NVG realistic preset:** P43 **green phosphor** (`#88FFAA`), near-monochrome (`Saturation = -86`), tube **vignette**, light **halation** on bright sources, optional **film grain** scintillation. `AbsoluteGrade = true` by default.
+
+## 2.0.4 — 2026-05-16
+
+### Changed
+- **NVG:** more **natural** look — near-neutral color filter, **no green bloom tint**, lower brightness (`PostExposureMax` 1.75, slight negative offset by day), gentler saturation/contrast.
+
+## 2.0.3 — 2026-05-16
+
+### Changed
+- **NVG:** much less green — lower `ColorFilterStrength`, softer default tint (`#E2F2EA`), minimal `BloomTintBlend`.
+
+## 2.0.2 — 2026-05-16
+
+### Fixed
+- **NVG white-out:** removed stacked post-exposure on every auto-gain tick; added **`PostExposureMax`** cap; much lower bloom/light defaults; scene light boost **off** by default (`BoostSceneLights = false`).
+
+## 2.0.1 — 2026-05-16
+
+### Added
+- **`[NightVision]`**: улучшенный штатный NVG в кокпите — фосфорный **color filter**, контраст/насыщение, **bloom** на огнях, доп. **post-exposure** и порог bloom поверх vanilla auto-gain, усиление `nightVisLight` и `nightVisionIlluminator`. Пока NVG включён, кинопост **Atmosphere** на основной volume не применяется.
+
+### Archived
+- **2.0.0** (без NVG): `release/GlocCamera_Engine_v2.0.0.dll`
+
+## 2.0.0 — 2026-05-16
+
+### Changed
+- **Version scheme:** `MAJOR.MINOR.PATCH`, each digit **0–9** (carry to parent on overflow). Current release **2.0.0** (= legacy dev **1.11.0**).
+- **Atmosphere defaults:** softer **bloom** (lower intensity/scatter/tint blend) and lighter **vignette** (less edge darkening).
+
+### Removed
+- Experimental **gear / nose landing light** code (legacy **1.10.0** dev; not shipped).
+
+### Added
+- **Cinematic cockpit post** (URP volume, **`[Atmosphere]`**): **bloom** (intensity, threshold, scatter, warm tint), **post-exposure**, **saturation/contrast**, **color filter**, **vignette**, **chromatic aberration**; day/night lerp (sun heuristic).
+- **`DeferSaturationVignetteDuringVanillaGloc`**: during vanilla G-LOC greyout/blackout, saturation/vignette/filter defer to the game.
+
+## 1.10.0 — 2026-05-16 *(dev, not released)*
+
+### Changed
+- Gear light uses **geometry**: forward-most point on airframe renderer bounds, then **`NoseTipDownOffsetMeters`** below and **`NoseTipBackInsetMeters`** back along the nose. No NavLights / gearlight path lookup.
+
+## 1.9.4 — 2026-05-16
+
+### Fixed
+- Gear lamp stuck on **waiting**: better transform search (path suffix + `gearlight_F` leaf), **NavLights.Toggle** via reflection, parent hierarchy forced active on gear deploy.
+- **Vanilla emissive** landing lamp works even before Unity `Light` spawns; `onSetGear` retriggers bind/visuals.
+
+## 1.9.2 — 2026-05-16
+
+### Added
+- **`GearDebugDumpHierarchy`**: on first cockpit bind per airframe, writes **every GameObject** under the local aircraft to `BepInEx\<aircraft>_hierarchy.txt` (plus sections for `LandingGear`, `Light`, `NavLights`). Use it to pick the nose lamp path for a future cfg key.
+
+## 1.9.1 — 2026-05-16
+
+### Fixed
+- Many airframes have **no `Light` on the nose strut** (only `NavLights` emissive meshes). The mod now finds the **NavLights landing lamp anchor** and **spawns a child spot** on that transform; also forces nav lamp meshes/materials on when gear is down.
+- Clearer bind failure logs (gear path, anchor path, light count).
+
+## 1.9.0 — 2026-05-16
+
+### Changed
+- Gear lighting **reverted from ground decals** to Unity lights: the mod **finds the vanilla nose-strut landing lamp** (under nose gear / `NavLights` gear link) and **boosts it in place** — no spawned world rig, no layer changes.
+- `ForwardSpot*` and world offset keys are **unused**; only `NoseGearLight*` + `ExcludeOwnAircraftLayers` apply.
+
+## 1.8.0 — 2026-05-16
+
+### Changed
+- Gear / landing lighting is now **ground decals** (soft mesh quads raycast onto terrain/runway), **not Unity `Light` spots** — no cockpit or instrument wash.
+- `NoseGearLightIntensity` / `ForwardSpotIntensity` = decal **brightness**; `*Range` = **diameter** (meters).
+- **`GearBoostVanilla` default `false`** (unused; vanilla light multiply removed with decals).
+
+## 1.7.5 — 2026-05-16
+
+### Fixed
+- **Reverted cockpit layer reassignment** from 1.7.4 (moving meshes to Ignore Collisions broke rendering). Gear lights again use **culling mask only** — game object layers are never modified.
+
+## 1.7.4 — 2026-05-16
+
+### Fixed
+- Gear lights **washed out cockpit instruments**: **outdoor-only** layer mask (terrain/runway/world) plus temporary isolation of `cockpitRenderers` / interior meshes so beams aim **outward** only.
+
+### Changed
+- Nose/forward spots placed **farther ahead** and **steeper down** with **narrower cones** (defaults).
+
+## 1.7.3 — 2026-05-16
+
+### Fixed
+- Gear lights **washed out the whole screen** after tuning: sane defaults, narrower cones, and **hard caps** on intensity/range/vanilla boost (cfg values above max are clamped).
+
+### Changed
+- Defaults: nose **5.5** / forward **16** intensity; forward range **120 m**; slightly tighter spot cones.
+
+## 1.7.2 — 2026-05-16
+
+### Fixed
+- Gear/ground spots did not appear on many airframes: lights are now in **world space** (in front of the nose), with **URP `UniversalAdditionalLightData`**.
+- **`ExcludeOwnAircraftLayers`**: mod spots skip the local aircraft's renderer layers (e.g. layer 15) so the beam is not wasted on fuselage textures.
+
+### Changed
+- World offsets: `NoseGearLightForwardOffsetMeters` / `ForwardSpotForwardOffsetMeters` (defaults **1.4 m** / **7 m** ahead of nose gear).
+- Higher default URP intensities (**12** / **48**).
+
+## 1.7.1 — 2026-05-16
+
+### Fixed
+- **Forward ground spot** now parents to the **aircraft root** (not only the nose strut), with offset from the nose gear point in aircraft space — fixes missing/invisible spotlight on many airframes.
+
+### Changed
+- **+50%** default brightness for nose strut light and forward ground spot (intensity/range).
+
+## 1.7.0 — 2026-05-16
+
+### Added
+- **Nose gear landing light:** wide warm spot parented to the nose strut **unsprung** (`GlocCamera_NoseGearLandingLight`) — reliable runway/taxi wash when gear is down.
+- **Forward ground spot:** bright long-range spot ahead of the aircraft (`GlocCamera_ForwardGroundSpot`).
+- **Vanilla gear boost:** optional force-enable + intensity multiply on existing `Light` components on nose/landing gear paths (`GearBoostVanilla`, `GearVanillaBoostMul`).
+- Config under **`[Lighting]`**: `GearEnabled`, `GearNightMin01` (default **0** = day+night), `NoseGearLight*`, `ForwardSpot*`.
+
 ## 1.6.1 — 2026-05-12
 
 - **ApexView:** Uses **pitch, roll, and yaw** from `ControlInputs` — local **X, Y, and Z** ( **`MaxDepthMeters`** + **`Depth*Scale`** ). New cfg: lateral/vertical/**depth** pitch scales, **`PitchInputSign`**. Default **yaw lateral** weight raised (**`LateralYawScale` = 1**) so rudder/coordinated yaw is easier to feel.

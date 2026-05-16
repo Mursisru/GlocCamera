@@ -8,7 +8,7 @@ Optional **atmosphere** tweaks **URP Bloom** and **post-exposure** on the game�
 
 The mod adds an offset on top of the game’s desired FOV (settings + zoom axis). Final easing uses a configurable per-frame lerp (default **0.11**, softer than vanilla **~0.2**).
 
-**Current version:** **1.5.2** (see `GlocCameraPlugin.PluginVersion` and [CHANGELOG.md](CHANGELOG.md)).
+**Current version:** **2.0.8** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
 
 ## Download
 
@@ -25,9 +25,27 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 1. From a release zip: extract `GlocCamera_Engine.dll` into `Nuclear Option\BepInEx\plugins\` (see `release\INSTALL.txt`).
 2. From source: build **Release** and copy `GlocCamera_Engine\bin\Release\GlocCamera_Engine.dll` to `BepInEx\plugins\`.
 
+## Build (Visual Studio / MSBuild)
+
+1. If **Nuclear Option** is not under the default Steam path, set `<NuclearOptionRoot>` in `GlocCamera_Engine\GlocCamera_Engine.csproj` to your install folder.
+2. Open `GlocCamera_Engine.slnx` or `GlocCamera_Engine\GlocCamera_Engine.csproj`, build **Release**.
+3. Output: `GlocCamera_Engine\bin\Release\GlocCamera_Engine.dll`.
+
+The project references **`Unity.RenderPipelines.Core.Runtime`** and **`Unity.RenderPipelines.Universal.Runtime`** from `$(NuclearOptionRoot)\NuclearOption_Data\Managed\` for `Volume` / Bloom types. If your game build renames those assemblies, update the `HintPath` entries in `GlocCamera_Engine.csproj`.
+
+### Maintainer: release zip
+
+From repo root (after a Release build):
+
+```powershell
+.\scripts\package-release.ps1
+```
+
+Produces `release\GlocCamera_Engine_v<version>.zip` (DLL + `release\INSTALL.txt`).
+
 ## Configuration
 
-Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run (for change settings in-game – use BepInEx ConfiguratorManager).
+Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run.
 
 | Section | Key | Notes |
 |--------|-----|--------|
@@ -90,6 +108,10 @@ Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run (for chan
 | Lighting | `FillSpotAngleWide` / `FillInnerSpotAngleWide` | Wide flashlight outer/inner cone (degrees) when **K** has toggled wide mode on. |
 | Lighting | `FillNightMin01` / `FillEnabled` / `FillLocalPosition` / `FillPitchDegrees` / `FillYawDegrees` / `FillRollDegrees` / `FillIntensity` / … | Fill **spawns** on the **cockpit camera** using **camera-local** pos/euler, then **one-shot** reparent to **`cockpit.transform`** with **world pose preserved** — frozen on the panel; changing cfg does **not** move it until the fill is recreated (leave cockpit / swap aircraft / toggle Fill). |
 | Lighting | `ExternalIntensityMul` / `ExternalRangeMul` / `ExternalNameSubstrings` | Boost lights whose hierarchy path contains a substring (e.g. **gear**, **landing**). Paths under **cockpit** are ignored **unless** they also match — avoids washing out the HUD. Add `;`-separated tokens for odd airframes. |
+| Lighting | `GearEnabled` / `GearNightMin01` / `GearRequireGearDown` | Nose-strut **landing wash** + **forward ground spot** when gear is down (`GearNightMin01` **0** = day and night). |
+| Lighting | `NoseGearLight*` | Wide warm spot on nose **unsprung** strut (runway/taxi in front of wheels). |
+| Lighting | `ForwardSpot*` | Bright long-range spot on the ground ahead. |
+| Lighting | `GearBoostVanilla` / `GearVanillaBoostMul` | Force-enable and strengthen vanilla prefab lights on gear/landing paths. |
 | CockpitView | `OffsetLocalX` / `OffsetLocalY` / `OffsetLocalZ` | Additive **local** camera shift after vanilla cockpit placement. **Z** stacks with G-LOC dolly when TrackIR is off (`finalZ = dolly + OffsetLocalZ`). |
 | CockpitView | `FovBiasDegrees` | Additive FOV after vanilla clamp + G-LOC longitudinal offset; clamped again to cockpit min/max. |
 | CockpitView | `ApplyFramingWithTrackIR` | Default **false** (vanilla TrackIR pose unchanged). If **true**, offsets and FOV bias apply; **XYZ** are clamped like vanilla TrackIR limits. |

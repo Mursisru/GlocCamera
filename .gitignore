@@ -1,6 +1,3 @@
-# Local MSBuild overrides (game install path)
-Directory.Build.user.props
-
 # Build output
 bin/
 obj/

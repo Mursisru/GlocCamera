@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuclearOptionRoot Condition="'$(NuclearOptionRoot)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Nuclear Option</NuclearOptionRoot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +57,9 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(NuclearOptionRoot)\NuclearOption_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(NuclearOptionRoot)\NuclearOption_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
     <!-- URP / Volume (same Managed folder as the game; names match Unity SRP packages) -->
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
       <HintPath>$(NuclearOptionRoot)\NuclearOption_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
@@ -75,6 +79,9 @@
     <Compile Include="GlocCameraAtmosphereDriver.cs" />
     <Compile Include="GlocCameraAtmospherePatches.cs" />
     <Compile Include="GlocNightFactor.cs" />
+    <Compile Include="GlocNightVisionUtil.cs" />
+    <Compile Include="GlocNightVisionDriver.cs" />
+    <Compile Include="GlocNightVisionPatches.cs" />
     <Compile Include="GlocCockpitLightingDriver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
