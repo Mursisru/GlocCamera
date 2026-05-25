@@ -41,7 +41,7 @@ From repo root (after a Release build):
 .\scripts\package-release.ps1
 ```
 
-Produces `release\GlocCamera_Engine_v<version>.zip`. Full publish checklist: [GITHUB_PUBLISH.md](GITHUB_PUBLISH.md).
+Produces `release\GlocCamera_Engine_v<version>.zip`. 
 
 ## Configuration
 
