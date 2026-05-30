@@ -8,7 +8,7 @@ Optional **atmosphere** tweaks **URP Bloom** and **post-exposure** on the game�
 
 The mod adds an offset on top of the game’s desired FOV (settings + zoom axis). Final easing uses a configurable per-frame lerp (default **0.11**, softer than vanilla **~0.2**).
 
-**Current version:** **2.0.9** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
+**Current version:** **2.1.0** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
 
 ## Download
 
@@ -111,6 +111,11 @@ Generated at `BepInEx\config\com.at747.gloccamera.cfg` after first run.
 | CockpitView | `OffsetLocalX` / `OffsetLocalY` / `OffsetLocalZ` | Additive **local** camera shift after vanilla cockpit placement. **Z** stacks with G-LOC dolly when TrackIR is off (`finalZ = dolly + OffsetLocalZ`). |
 | CockpitView | `FovBiasDegrees` | Additive FOV after vanilla clamp + G-LOC longitudinal offset; clamped again to cockpit min/max. |
 | CockpitView | `ApplyFramingWithTrackIR` | Default **false** (vanilla TrackIR pose unchanged). If **true**, offsets and FOV bias apply; **XYZ** are clamped like vanilla TrackIR limits. |
+| ApexView | `Enabled` | Smooth cockpit **local X/Y/Z** from **pitch/roll/yaw** `ControlInputs` (TrackIR off). |
+| ApexView | `MaxLateralMeters` / `MaxVerticalMeters` / `MaxDepthMeters` | Offset caps (defaults **0.085** / **0.045** / **0.03** m). |
+| ApexView | `Lateral*Scale` / `Vertical*Scale` / `Depth*Scale` | Per-axis blend from stick inputs. |
+| ApexView | `SmoothTimeSeconds` / `SmoothMaxMetersPerSec` | Defaults **0.42** / **0.12**. |
+| ApexView | `AlsoApplyWithTrackIR` | Apply apex with TrackIR when CockpitView framing-with-TrackIR is on. |
 
 Set `Dolly.MaxMeters` to `0` to disable dolly and keep FOV-only (offsets and FOV bias still apply unless zero).
 
@@ -132,6 +137,7 @@ After upgrading, delete stale cfg keys or regenerate **`com.at747.gloccamera.cfg
 9. **TrackIR:** Dolly skipped; FOV offset still applies; extra shake scaled by `Shake.TrackIRScale`.
 10. **Mod off:** `General.Enabled` false — no FOV/dolly/shake/atmosphere changes; atmosphere restores if it was active.
 11. **Unload:** Remove plugin DLL or exit game — atmosphere restores in `OnDestroy`.
+12. **ApexView:** Steep turns (60°+ bank) — head should **look into the turn** (HUD shifts opposite side); level flight returns to center. Compare with DCS reference if needed.
 
 ## Technical notes
 

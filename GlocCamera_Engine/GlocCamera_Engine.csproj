@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlocFrameContext.cs" />
     <Compile Include="GlocCameraPlugin.cs" />
     <Compile Include="GlocCameraDriver.cs" />
     <Compile Include="GlocApexViewDriver.cs" />

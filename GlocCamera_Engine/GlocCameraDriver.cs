@@ -27,21 +27,20 @@ namespace GlocCamera_Engine
             }
 
             Aircraft local;
-            if (!GameManager.GetLocalAircraft(out local))
+            if (!GlocFrameContext.HasLocalAircraft)
             {
                 Decay(Time.unscaledDeltaTime);
                 return;
             }
 
-            var hud = SceneSingleton<CombatHUD>.i;
-            var ac = hud != null ? hud.aircraft : null;
-            if (ac == null || ac != local || cam.followingUnit != local)
+            local = GlocFrameContext.LocalAircraft;
+            if (!GlocFrameContext.IsLocalPilotReady(cam))
             {
                 Decay(Time.unscaledDeltaTime);
                 return;
             }
 
-            float longG = Vector3.Dot(ac.accel, ac.transform.forward);
+            float longG = Vector3.Dot(GlocFrameContext.HudAircraft.accel, GlocFrameContext.HudAircraft.transform.forward);
             float dzL = GlocCameraPlugin.DeadZoneLongG.Value;
             if (Mathf.Abs(longG) < dzL)
                 longG = 0f;

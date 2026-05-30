@@ -12,7 +12,7 @@ namespace GlocCamera_Engine
     {
         public const string PluginGuid = "com.at747.gloccamera";
         public const string PluginName = "G-LOC Camera";
-        public const string PluginVersion = "2.0.9";
+        public const string PluginVersion = "2.2.2";
 
         internal static GlocCameraPlugin Instance { get; private set; }
 
@@ -718,6 +718,7 @@ namespace GlocCamera_Engine
         /// </summary>
         private void LateUpdate()
         {
+            GlocFrameContext.Refresh();
             var cam = SceneSingleton<CameraStateManager>.i;
             GlocCameraDriver.Tick(cam);
             GlocApexViewDriver.Tick(cam);

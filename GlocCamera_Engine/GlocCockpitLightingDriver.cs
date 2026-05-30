@@ -70,24 +70,22 @@ namespace GlocCamera_Engine
                 return;
             }
 
-            Aircraft local;
-            if (!GameManager.GetLocalAircraft(out local))
+            if (!GlocFrameContext.HasLocalAircraft)
             {
                 if (_boundAircraft != null)
                     ForceRestore();
                 return;
             }
 
-            var hud = SceneSingleton<CombatHUD>.i;
-            var ac = hud != null ? hud.aircraft : null;
-            if (ac == null || ac != local || cam.followingUnit != local)
+            Aircraft local = GlocFrameContext.LocalAircraft;
+            if (!GlocFrameContext.IsLocalPilotReady(cam))
             {
                 if (_boundAircraft != null)
                     ForceRestore();
                 return;
             }
 
-            if (ac.cockpit == null || ac.cockpit.transform == null)
+            if (local.cockpit == null || local.cockpit.transform == null)
                 return;
 
             if (cam.transform == null)
@@ -96,11 +94,11 @@ namespace GlocCamera_Engine
             if (!GameManager.flightControlsEnabled)
                 return;
 
-            if (_boundAircraft != ac)
+            if (_boundAircraft != local)
             {
                 ForceRestore();
-                DestroyStrayModObjectsOnAircraft(ac);
-                BindAircraft(ac);
+                DestroyStrayModObjectsOnAircraft(local);
+                BindAircraft(local);
             }
 
             ProcessFillHotkeys();
@@ -108,7 +106,7 @@ namespace GlocCamera_Engine
             float night01 = GlocNightFactor.ComputeNight01();
             bool nightOk = night01 >= Mathf.Clamp01(GlocCameraPlugin.LightingFillNightMin01.Value);
             bool fillOn = GlocCameraPlugin.LightingFillEnabled.Value && _fillUserArmed && nightOk;
-            EnsureFill(ac, cam.transform);
+            EnsureFill(local, cam.transform);
             if (_fillLight != null)
             {
                 _fillLight.enabled = fillOn;

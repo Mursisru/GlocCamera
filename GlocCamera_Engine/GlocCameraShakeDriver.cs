@@ -129,20 +129,20 @@ namespace GlocCamera_Engine
             if (!GameManager.flightControlsEnabled)
                 return;
 
-            Aircraft local;
-            if (!GameManager.GetLocalAircraft(out local))
+            GlocFrameContext.Refresh();
+            if (!GlocFrameContext.HasLocalAircraft)
                 return;
 
-            var hud = SceneSingleton<CombatHUD>.i;
-            var ac = hud != null ? hud.aircraft : null;
-            if (ac == null || ac != local || cam.followingUnit != local)
+            Aircraft local = GlocFrameContext.LocalAircraft;
+            Aircraft ac = local;
+            if (!GlocFrameContext.IsLocalPilotReady(cam))
             {
                 _prevLongGValid = false;
                 return;
             }
 
-            Vector3 forward = ac.transform.forward;
-            Vector3 a = ac.accel;
+            Vector3 forward = GlocFrameContext.HudAircraft.transform.forward;
+            Vector3 a = GlocFrameContext.HudAircraft.accel;
             float longG = Vector3.Dot(a, forward);
             Vector3 lateral = a - forward * longG;
             float maneuverG = lateral.magnitude;

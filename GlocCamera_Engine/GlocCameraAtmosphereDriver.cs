@@ -67,17 +67,15 @@ namespace GlocCamera_Engine
                 return;
             }
 
-            Aircraft local;
-            if (!GameManager.GetLocalAircraft(out local))
+            if (!GlocFrameContext.HasLocalAircraft)
             {
                 if (_armed)
                     ForceRestore();
                 return;
             }
 
-            var hud = SceneSingleton<CombatHUD>.i;
-            var ac = hud != null ? hud.aircraft : null;
-            if (ac == null || ac != local || cam.followingUnit != local)
+            Aircraft local = GlocFrameContext.LocalAircraft;
+            if (!GlocFrameContext.IsLocalPilotReady(cam))
             {
                 if (_armed)
                     ForceRestore();
