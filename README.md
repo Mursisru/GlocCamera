@@ -2,7 +2,7 @@
 
 # G-LOC Camera (GlocCamera_Engine)
 
-[![Nuclear Option](https://img.shields.io/badge/Game-Nuclear%20Option-blue)](https://store.steampowered.com/app/2168680/Nuclear_Option/) [![BepInEx 5](https://img.shields.io/badge/Loader-BepInEx%205-orange)](https://docs.bepinex.dev/) [![Version](https://img.shields.io/badge/Version-0.0.0-green)]() [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+[![Nuclear Option](https://img.shields.io/badge/Game-Nuclear%20Option-blue)](https://store.steampowered.com/app/2168680/Nuclear_Option/) [![BepInEx 5](https://img.shields.io/badge/Loader-BepInEx%205-orange)](https://docs.bepinex.dev/) [![Version](https://img.shields.io/badge/Version-2.2.2)]() [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 
 BepInEx 5 plugin for **Nuclear Option**: in **cockpit**, smooth **FOV** and optional **camera dolly** from **throttle-style acceleration** only — the projection `Vector3.Dot(aircraft.accel, aircraft.transform.forward)` (G along the nose). **Turn/pull G is not used** for FOV so it does not stack with the game’s own G effects.
