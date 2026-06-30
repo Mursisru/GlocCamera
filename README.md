@@ -7,17 +7,6 @@
 [![Version](https://img.shields.io/badge/Version-2.2.2-green)](https://github.com/Mursisru/GlocCamera/releases/tag/v2.2.2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](https://github.com/Mursisru/GlocCamera/blob/main/LICENSE)
 
-
-BepInEx 5 plugin for **Nuclear Option**: in **cockpit**, smooth **FOV** and optional **camera dolly** from **throttle-style acceleration** only — the projection `Vector3.Dot(aircraft.accel, aircraft.transform.forward)` (G along the nose). **Turn/pull G is not used** for FOV so it does not stack with the game’s own G effects.
-
-Optional **extra cockpit shake** uses the same longitudinal signal plus **lateral maneuver G**, fed into vanilla `CameraCockpitState.AddShake` (low/high frequency) so the stock shake pipeline and rattle stay coherent.
-
-Optional **atmosphere** tweaks **URP Bloom** and **post-exposure** on the game’s main post `Volume`, blended stronger toward **night** (sun direction heuristic), with values **restored** when you leave the cockpit or unload the plugin.
-
-The mod adds an offset on top of the game’s desired FOV (settings + zoom axis). Final easing uses a configurable per-frame lerp (default **0.11**, softer than vanilla **~0.2**).
-
-**Current version:** **2.2.2** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
-
 ---
 
 ## Critical warnings
@@ -33,6 +22,16 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 > [!WARNING]
 > **URP assembly paths** - project references `Unity.RenderPipelines.*` from game `Managed\`; update `.csproj` HintPaths if your game build renames assemblies.
+
+BepInEx 5 plugin for **Nuclear Option**: in **cockpit**, smooth **FOV** and optional **camera dolly** from **throttle-style acceleration** only — the projection `Vector3.Dot(aircraft.accel, aircraft.transform.forward)` (G along the nose). **Turn/pull G is not used** for FOV so it does not stack with the game’s own G effects.
+
+Optional **extra cockpit shake** uses the same longitudinal signal plus **lateral maneuver G**, fed into vanilla `CameraCockpitState.AddShake` (low/high frequency) so the stock shake pipeline and rattle stay coherent.
+
+Optional **atmosphere** tweaks **URP Bloom** and **post-exposure** on the game’s main post `Volume`, blended stronger toward **night** (sun direction heuristic), with values **restored** when you leave the cockpit or unload the plugin.
+
+The mod adds an offset on top of the game’s desired FOV (settings + zoom axis). Final easing uses a configurable per-frame lerp (default **0.11**, softer than vanilla **~0.2**).
+
+**Current version:** **2.2.2** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
 
 ## Download
 
