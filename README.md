@@ -10,18 +10,15 @@
 ---
 
 ## Critical warnings
-
 > [!IMPORTANT]
 > **BepInEx 5 (x64) required** - install [BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html) before this mod.
 
-> [!NOTE]
-> **Cockpit-only effect** - FOV/dolly/shake apply in cockpit view; atmosphere tweaks restore on exit/unload.
-
-> [!NOTE]
-> **Uses longitudinal G only for FOV** - turn/pull G is intentionally excluded to avoid stacking with vanilla G effects.
-
 > [!WARNING]
 > **URP assembly paths** - project references `Unity.RenderPipelines.*` from game `Managed\`; update `.csproj` HintPaths if your game build renames assemblies.
+
+> [!NOTE]
+> - **Cockpit-only effect** - FOV/dolly/shake apply in cockpit view; atmosphere tweaks restore on exit/unload.
+> - **Uses longitudinal G only for FOV** - turn/pull G is intentionally excluded to avoid stacking with vanilla G effects.
 
 BepInEx 5 plugin for **Nuclear Option**: in **cockpit**, smooth **FOV** and optional **camera dolly** from **throttle-style acceleration** only — the projection `Vector3.Dot(aircraft.accel, aircraft.transform.forward)` (G along the nose). **Turn/pull G is not used** for FOV so it does not stack with the game’s own G effects.
 
