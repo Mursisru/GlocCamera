@@ -1,4 +1,9 @@
+**Developer:** Mursisru
+
 # G-LOC Camera (GlocCamera_Engine)
+
+[![Nuclear Option](https://img.shields.io/badge/Game-Nuclear%20Option-blue)](https://store.steampowered.com/app/2168680/Nuclear_Option/) [![BepInEx 5](https://img.shields.io/badge/Loader-BepInEx%205-orange)](https://docs.bepinex.dev/) [![Version](https://img.shields.io/badge/Version-0.0.0-green)]() [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+
 
 BepInEx 5 plugin for **Nuclear Option**: in **cockpit**, smooth **FOV** and optional **camera dolly** from **throttle-style acceleration** only — the projection `Vector3.Dot(aircraft.accel, aircraft.transform.forward)` (G along the nose). **Turn/pull G is not used** for FOV so it does not stack with the game’s own G effects.
 
@@ -22,6 +27,9 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 ## Install
 
+> [!IMPORTANT]
+> **BepInEx 5 (x64) required** - install [BepInEx](https://docs.bepinex.dev/) before this mod.
+
 1. From a release zip: extract `GlocCamera_Engine.dll` into `Nuclear Option\BepInEx\plugins\` (see `release\INSTALL.txt`).
 2. From source: build **Release** and copy `GlocCamera_Engine\bin\Release\GlocCamera_Engine.dll` to `BepInEx\plugins\`.
 
@@ -41,7 +49,7 @@ From repo root (after a Release build):
 .\scripts\package-release.ps1
 ```
 
-Produces `release\GlocCamera_Engine_v<version>.zip`. 
+Produces `release\GlocCamera_Engine_v<version>.zip`. Full publish checklist: [GITHUB_PUBLISH.md](GITHUB_PUBLISH.md).
 
 ## Configuration
 
@@ -155,3 +163,9 @@ Independent fan mod — **not** affiliated with or endorsed by the developers of
 ## License
 
 [MIT](LICENSE). Attribution appreciated when redistributing or forking.
+
+---
+
+## Keywords
+
+nuclear-option, bepinex, harmony, mod, gloccamera, csharp, unity

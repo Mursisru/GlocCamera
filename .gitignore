@@ -25,3 +25,11 @@ Desktop.ini
 # Local release copies
 release/*.dll
 release/*.zip
+libs/
+Directory.Build.props
+.cursorrules
+.cursor/
+ffmpeg.exe
+local_build_scripts/
+_buildroot/
+.debug/
