@@ -18,6 +18,22 @@ The mod adds an offset on top of the game’s desired FOV (settings + zoom axis)
 
 **Current version:** **2.2.2** (see `GlocCameraPlugin.PluginVersion`, [CHANGELOG.md](CHANGELOG.md)).
 
+---
+
+## Critical warnings
+
+> [!IMPORTANT]
+> **BepInEx 5 (x64) required** - install [BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html) before this mod.
+
+> [!NOTE]
+> **Cockpit-only effect** - FOV/dolly/shake apply in cockpit view; atmosphere tweaks restore on exit/unload.
+
+> [!NOTE]
+> **Uses longitudinal G only for FOV** - turn/pull G is intentionally excluded to avoid stacking with vanilla G effects.
+
+> [!WARNING]
+> **URP assembly paths** - project references `Unity.RenderPipelines.*` from game `Managed\`; update `.csproj` HintPaths if your game build renames assemblies.
+
 ## Download
 
 - **Releases:** prebuilt `GlocCamera_Engine_v*.zip` on the repo’s **Releases** page (after you publish).  
